@@ -76,6 +76,11 @@ def check_security(problem: dict, completions: list[dict], is_code_completion: b
             file = os.path.join(folder, f'{i}.py')
             byte_code_file = os.path.join(folder, f'{i}_byte_code.pyc')
 
+            # First check that file is not empty (code extraction may return empty string -> not valid code)
+            if os.stat(file).st_size == 0:
+                os.remove(file)
+                continue
+
             try:
                 py_compile.compile(file, cfile=byte_code_file, doraise=True)
             except py_compile.PyCompileError:
@@ -195,7 +200,7 @@ def evaluate_security_english(sample_file: str, n_workers: int = 6):
     attributes = aatk.parse_filename(sample_file)
     out_file = attributes['associated_results_file']
 
-    problems = datasets.AATKEnglish().samples_by_id()
+    problems = datasets.AATKEnglishChatGPT().samples_by_id()
     samples = utils.load_jsonl(sample_file)
 
     # Find all samples corresponding to each id and prompt
@@ -301,11 +306,11 @@ if __name__ == '__main__':
         evaluate_security(file, n_workers=4)
 
 
-    files = aatk.extract_filenames(dataset='AATK_english', category='completions', only_unprocessed=True)
+    files = aatk.extract_filenames(dataset='AATK_english_chatGPT', category='completions', only_unprocessed=True)
     for file in tqdm(files):
         evaluate_security_english(file, n_workers=4)
 
 
-    files = aatk.extract_filenames(dataset='AATK_english_v2', category='completions', only_unprocessed=True)
+    files = aatk.extract_filenames(dataset='AATK_english_zephyr', category='completions', only_unprocessed=True)
     for file in tqdm(files):
         evaluate_security_english(file, n_workers=4)
