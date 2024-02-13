@@ -317,8 +317,6 @@ def prompt_exposure(dataset: str = 'AATK_english_chatGPT', to_df: bool = True) -
     files = extract_filenames(dataset, category='results')
     cvss = get_cvss_scores()
 
-    model_names = ['star-chat-alpha', 'code-llama-34B-instruct', 'llama2-70B-chat']
-
     PEs_by_model = {}
 
     for file in files:
